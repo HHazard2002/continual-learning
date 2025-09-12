@@ -37,6 +37,35 @@ def tokenize(example, tokenizer):
             "labels": labels
         }
 
+def tokenize_t5(ex, tokenizer, task_prefix=""):
+    source = (task_prefix + ex["prompt"]).strip()
+    target = ex["label"]
+
+    model_inputs = tokenizer(source)
+
+    with tokenizer.as_target_tokenizer():
+        labels = tokenizer(target)["input_ids"]
+
+    # Fix edge cases: labels must be a non-empty list[int]
+    if not isinstance(labels, list):
+        labels = list(labels)  # in case something returned a numpy array/torch tensor
+    if len(labels) == 0:
+        labels = [tokenizer.pad_token_id]  # avoid zero-length labels
+
+    model_inputs["labels"] = labels
+    return model_inputs
+
+def subsample(ex, MAX_SRC=512, MAX_TGT=256):
+        return len(ex["input_ids"]) <= MAX_SRC and len(ex["labels"]) <= MAX_TGT
+
+def prepare_datasets(tokenizer, train_datasets_full, test_datasets, MAX_SRC=512, MAX_TGT=256):
+    for i in range(len(train_datasets_full)):
+        train_datasets_full[i] = train_datasets_full[i].map(lambda e: tokenize_t5(e, tokenizer=tokenizer))
+        train_datasets_full[i] = train_datasets_full[i].filter(subsample, batched=False)
+
+        test_datasets[i] = test_datasets[i].map(tokenize_t5)
+        test_datasets[i]  = test_datasets[i].filter(subsample, batched=False)
+    return train_datasets_full, test_datasets
 
 def prepare_datasets(train_datasets_full, tokenizer, tasks):
     train_datasets = []
@@ -51,7 +80,6 @@ def prepare_mlt_dataset(train_datasets):
     joint_ds = concatenate_datasets(train_datasets)
     mlt_dataset = joint_ds.shuffle(seed=42)
     return mlt_dataset
-
 
 def check_prompts_labels(tokenizer, train_datasets):
     for train_dataset in train_datasets:

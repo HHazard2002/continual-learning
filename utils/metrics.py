@@ -1,7 +1,7 @@
 import re
 import torch
 
-def get_ll_text(text, model, tokenizer, DEVICE="cuda"):
+def get_ll(text, model, tokenizer, DEVICE="cuda"):
     with torch.no_grad():
         tokenized = tokenizer(text, return_tensors="pt").to(DEVICE)
         labels = tokenized.input_ids

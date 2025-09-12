@@ -1,4 +1,3 @@
-cl_method=""
 main.py \
     --model_name  "google-t5/t5-large"\
     --tasks "dbpedia", "amazon", "yahoo", "ag_news" \
@@ -12,6 +11,7 @@ main.py \
     --torch_dtype "torch.bfloat16" \
     --num_samples_eval "500" \
     --num_samples_training "1000" \
-
-    
-    
+    --buffer "SurpriseBuffer" \
+    --dual_learner "False" \
+    --update_buffer "before" \
+    --compute_surprise "before" \

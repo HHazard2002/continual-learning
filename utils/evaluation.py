@@ -25,7 +25,7 @@ def evaluate_llama(model, test_ds, task, tokenizer, compute_ll=False):
           new_text = generate_new_text(text, model, tokenizer)
 
           if compute_ll:
-            losses += get_ll_text(text + text_answer, model)
+            losses += get_ll(text + text_answer, model)
 
           predicted = new_text.strip().lower()
           expected = text_answer.strip().lower()
@@ -36,7 +36,7 @@ def evaluate_llama(model, test_ds, task, tokenizer, compute_ll=False):
       print(f"The average loss per sequence for {task} is {losses / 100:.4f}")
 
 
-def evaluate_T5(model, test_ds, task, tokenizer, batch_size=32, compute_ll=False, task_prefix="", DEVICE="cuda", num_eval_samples="500"):
+def evaluate_T5(model, test_ds, task, tokenizer, batch_size=32, compute_ll=False, task_prefix="", DEVICE="cuda", num_eval_samples=500):
     model.eval()
     em = []
     losses = 0.0
