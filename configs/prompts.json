@@ -1,0 +1,61 @@
+{
+  "label_mappings": {
+    "yelp": {
+      "1": "very negative",
+      "2": "negative",
+      "3": "neutral",
+      "4": "positive",
+      "5": "very positive"
+    },
+    "amazon": {
+      "1": "very negative",
+      "2": "negative",
+      "3": "neutral",
+      "4": "positive",
+      "5": "very positive"
+    },
+    "dbpedia": {
+      "1": "Company",
+      "2": "Educational Institution",
+      "3": "Artist",
+      "4": "Athlete",
+      "5": "Office Holder",
+      "6": "Mean Of Transportation",
+      "7": "Building",
+      "8": "Natural Place",
+      "9": "Village",
+      "10": "Animal",
+      "11": "Plant",
+      "12": "Album",
+      "13": "Film",
+      "14": "Written Work"
+    },
+    "yahoo": {
+      "1": "Society & Culture",
+      "2": "Science & Mathematics",
+      "3": "Health",
+      "4": "Education & Reference",
+      "5": "Computers & Internet",
+      "6": "Sports",
+      "7": "Business & Finance",
+      "8": "Entertainment & Music",
+      "9": "Family & Relationships",
+      "10": "Politics & Government"
+    },
+    "ag_news": {
+      "1": "World",
+      "2": "Sports",
+      "3": "Business",
+      "4": "Sci/Tech"
+    }
+  },
+  "instruction": {
+    "yelp": "What is the sentiment of the following paragraph?",
+    "amazon": "What is the sentiment of the following paragraph?",
+    "dbpedia": "What is the topic of the following paragraph?",
+    "yahoo": "What is the topic of the following paragraph?",
+    "ag_news": "What is the topic of the following paragraph?"
+  },
+  "prompt": "Answer ONLY with the correct label word: "
+
+}
