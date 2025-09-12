@@ -1,9 +1,9 @@
 import re
 import torch
 
-def get_ll(text, model, tokenizer, DEVICE):
+def get_ll_text(text, model, tokenizer, DEVICE="cuda"):
     with torch.no_grad():
-        tokenized = tokenizer(text, return_tensors="pt", truncation=True, max_length=124).to(DEVICE)
+        tokenized = tokenizer(text, return_tensors="pt").to(DEVICE)
         labels = tokenized.input_ids
         output = model(**tokenized, labels=labels)
         avg_ll = -output.loss.item() # Loss is already averaged over tokens
@@ -29,8 +29,5 @@ def compute_exact_match(data):
 
         if pred_first_class.lower() == exp.lower():
             correct += 1
-        #print(pred)
-        #print(pred_first_class)
-        #print(exp)
 
     return correct / len(data)
