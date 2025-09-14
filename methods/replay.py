@@ -4,7 +4,7 @@ import torch
 
 
 class ReplayTrainer(Trainer):
-    def __init__(self, *args, buffer=None, domain=None, replay_frequency=2 **kwargs):
+    def __init__(self, *args, buffer=None, domain=None, replay_frequency=2, **kwargs):
         super().__init__(*args, **kwargs)
         self.buffer = buffer
         self.domain = domain

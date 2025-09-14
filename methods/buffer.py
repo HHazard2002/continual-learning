@@ -1,8 +1,6 @@
 import torch
 import numpy as np
-from utils.metrics import get_lls
-
-
+from utils.metrics import get_ll
 
 class Buffer:
     def __init__(self, buffer_size=500, device='cuda', type="Reservoir"):
@@ -90,7 +88,7 @@ class Buffer:
 
             if  self.is_empty() or (j == i and i < 14 and update_buffer=="after") or (j == (i+1) and i < 14 and update_buffer=="before"):
         
-                lls, seq_to_labels = get_lls(
+                lls, seq_to_labels = get_ll(
                     train_datasets[j]['input_ids'],
                     train_datasets[j]["labels"],
                     model

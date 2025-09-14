@@ -1,23 +1,15 @@
 import json
 from pathlib import Path
-from metrics import get_ll, compute_exact_match
-from inference import generate_new_text
+from utils.metrics import get_ll, compute_exact_match
+from utils.inference import generate_new_text
 from torch.utils.data import DataLoader
 import torch
 
-# Load JSON file
-with open(Path("../configs/prompts.json")) as f:
-    config = json.load(f)
-
-label_mappings = config["label_mappings"]
-instruction = config["instruction"]
-prompt = config["prompt"]
-
-def evaluate_llama(model, test_ds, task, tokenizer, compute_ll=False):
+def evaluate_llama(model, test_ds, task, tokenizer, num_samples_eval, compute_ll=False):
       em = []
       losses = 0
 
-      for i in range(min(100, len(test_ds))):
+      for i in range(min(num_samples_eval, len(test_ds))):
           sample = test_ds[i]
           text_answer = sample["label"]
 
@@ -36,11 +28,11 @@ def evaluate_llama(model, test_ds, task, tokenizer, compute_ll=False):
       print(f"The average loss per sequence for {task} is {losses / 100:.4f}")
 
 
-def evaluate_T5(model, test_ds, task, tokenizer, batch_size=32, compute_ll=False, task_prefix="", DEVICE="cuda", num_eval_samples=500):
+def evaluate_T5(model, test_ds, task, tokenizer, num_samples_eval=500,  batch_size=32, compute_ll=False, task_prefix="", DEVICE="mps"):
     model.eval()
     em = []
     losses = 0.0
-    n_samples = min(num_eval_samples, len(test_ds))
+    n_samples = min(num_samples_eval, len(test_ds))
 
     loader = DataLoader(range(n_samples), batch_size=batch_size, shuffle=False)
 
