@@ -1,0 +1,50 @@
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:45<00:00, 15.30s/it]
+{'train_runtime': 70.1646, 'train_samples_per_second': 0.214, 'train_steps_per_second': 0.043, 'train_loss': 13.145833333333334, 'epoch': 3.0}
+The exact match for dbpedia is 0.00
+The exact match for amazon is 0.00
+The exact match for yahoo is 0.00
+The exact match for ag_news is 0.00
+Traceback (most recent call last):
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/./main.py", line 203, in <module>
+    main()
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/./main.py", line 193, in main
+    buf.surprise_buffer_update(tokenizer, model, train_datasets, i, update_buffer)
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/methods/buffer.py", line 92, in surprise_buffer_update
+    actually_removed += 1  # Increment actual count
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/utils/metrics.py", line 6, in get_ll
+    tokenized = tokenizer(text, return_tensors="pt").to(DEVICE)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/peft/peft_model.py", line 2175, in forward
+    return self.base_model(
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/peft/tuners/tuners_utils.py", line 216, in forward
+    return self.model.forward(*args, **kwargs)
+TypeError: forward() got an unexpected keyword argument 'return_tensors'
+Traceback (most recent call last):
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/./main.py", line 203, in <module>
+    main()
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/./main.py", line 193, in main
+    buf.surprise_buffer_update(tokenizer, model, train_datasets, i, update_buffer)
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/methods/buffer.py", line 92, in surprise_buffer_update
+    actually_removed += 1  # Increment actual count
+  File "/Users/hugohazard/Desktop/Huawei/continual-learning/utils/metrics.py", line 6, in get_ll
+    tokenized = tokenizer(text, return_tensors="pt").to(DEVICE)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/peft/peft_model.py", line 2175, in forward
+    return self.base_model(
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/hugohazard/Library/Python/3.9/lib/python/site-packages/peft/tuners/tuners_utils.py", line 216, in forward
+    return self.model.forward(*args, **kwargs)
+TypeError: forward() got an unexpected keyword argument 'return_tensors'

@@ -50,7 +50,7 @@ def tokenize_t5(ex, tokenizer, task_prefix=""):
     model_inputs["labels"] = labels
     return model_inputs
 
-def subsample(ex, MAX_SRC=64, MAX_TGT=256):
+def subsample(ex, MAX_SRC=512, MAX_TGT=256):
         return len(ex["input_ids"]) <= MAX_SRC and len(ex["labels"]) <= MAX_TGT
 
 def prepare_datasets_T5(tokenizer, train_datasets_full, test_datasets, num_samples_training):

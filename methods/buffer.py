@@ -2,14 +2,52 @@ import torch
 import numpy as np
 from utils.metrics import get_ll
 
+def _seq_to_key(t: torch.Tensor) -> tuple[int, ...]:
+    """Convert to hashable key after removing pad tokens on either end."""
+    # 1‑D tensor expected here
+    # Drop left & right padding; middle padding cannot appear in causal LM.
+    if PAD_ID is not None:
+        t = t[t != PAD_ID]
+    return tuple(t.tolist())
+
+def get_ll(input_ids, labels, model):
+    with torch.no_grad():
+        # Convert to tensors if not already
+        if not isinstance(input_ids, torch.Tensor):
+            input_ids = torch.tensor(input_ids).unsqueeze(0).to(model.device)
+        if not isinstance(labels, torch.Tensor):
+            labels = torch.tensor(labels).unsqueeze(0).to(model.device)
+
+        sequence_labels = input_ids.clone()
+        sequence_labels[:, 0] = -100  # mask first token
+
+        out = model(input_ids=input_ids, labels=sequence_labels)
+        per_token_nll = out.loss.item()
+
+    return per_token_nll
+
+
+def get_lls(inputs, labels, model):
+    avg_lls = {}
+    seq_to_labels = {}  # key → original labels
+
+    for input_ids, label in zip(inputs, labels):
+        ll = get_ll(input_ids, label, model)
+        key = _seq_to_key(torch.tensor(input_ids))
+        avg_lls[key] = ll
+        seq_to_labels[key] = label  # store actual labels for this key
+
+    return avg_lls, seq_to_labels
+
 class Buffer:
-    def __init__(self, buffer_size=500, device='cuda', type="Reservoir"):
+    def __init__(self, data_collator, buffer_size=500, device='cuda', type="Reservoir"):
         self.buffer_size = buffer_size
         self.device = device
         self.buffer = []
         self.num_seen_examples = 0
         self.num_examples_per_dom = {}
         self.type = type
+        self.data_collator = data_collator
 
     def reservoir(self, index):
         if index < self.buffer_size:

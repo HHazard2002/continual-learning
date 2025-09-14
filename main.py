@@ -60,11 +60,11 @@ def main():
     gradient_accumulation_steps = int(get("gradient_accumulation_steps", 1))
     batch_size = int(get("batch_size", 1))
     lambda_ema = float(get("lambda_ema", 0.999))
-    eval_after_each_task = bool(get("eval_after_each_task", True))
+    eval_after_each_task = bool(get("eval_after_each_task", False))
 
     if buffer_type:
-        buffer_size = int(get("buffer_size", 0))
-        replay_frequency = int(get("replay_frequency", 1))
+        buffer_size = int(get("buffer_size", 500))
+        replay_frequency = int(get("replay_frequency", 2))
 
     DEVICE = get("device") or ("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running on {DEVICE}")
@@ -169,7 +169,7 @@ def main():
             trainer.buffer = buf
             trainer.replay_frequency = replay_frequency
             trainer.update_buffer = update_buffer
-            if update_buffer == "before":
+            if update_buffer == "before" and buffer_type == "Surprise":
                 buf.surprise_buffer_update(tokenizer, model, train_datasets, 0, update_buffer)
 
         if cl_method == "dual_learner":
@@ -189,7 +189,7 @@ def main():
                     evaluate(model, test_ds, task, tokenizer, num_samples_eval, compute_ll=False)
                 model.train()
 
-            if buf is not None and update_buffer in {"before", "after"}:
+            if buf is not None and update_buffer in {"before", "after"} and buffer_type == "Surprise":
                 buf.surprise_buffer_update(tokenizer, model, train_datasets, i, update_buffer)
             trainer.model = model
 

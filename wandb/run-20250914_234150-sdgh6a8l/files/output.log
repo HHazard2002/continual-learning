@@ -1,0 +1,8 @@
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [02:35<00:00, 51.72s/it]
+{'train_runtime': 156.7872, 'train_samples_per_second': 0.096, 'train_steps_per_second': 0.019, 'train_loss': 13.458333333333334, 'epoch': 3.0}
+The exact match for dbpedia is 0.00
+The exact match for amazon is 0.00
+The exact match for yahoo is 0.00
+The exact match for ag_news is 0.00
+--------Training on amazon---------
+  0%|                                                                                                                                                                                                                   | 0/3 [00:00<?, ?it/s]
