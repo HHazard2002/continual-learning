@@ -30,7 +30,7 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 # continual-learning
-
+```
 ## Repository structure
 ```
 ├── configs/                # Configurations for LoRA and Trainer
