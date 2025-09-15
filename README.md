@@ -30,3 +30,28 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 # continual-learning
+
+## Repository structure
+```
+├── configs/                # Configurations for LoRA and Trainer
+│   ├── lora_config.py   
+│   ├── training_config.py
+├── methods/                # Implementations for various continual learning approaches
+│   ├── buffer.py   
+│   ├── dual_learner.py
+│   ├── ewc.py   
+│   ├── replay.py
+│   ├── surprise_replay.py
+├── scripts/                # Scripts that can be used to reproduce experiments
+│   ├── mlt.sh
+│   ├── train.sh
+├── utils/                  # Additional functions which are used to load and pre-process the data, prepare the LLMs, etc...
+│   ├── datasets.py         # Loads and prepares the datasets  
+│   ├── evaluation.py       # Used to evaluate the model's performance
+│   ├── inference.py        # Used to generate text during evaluation
+│   ├── metrics.py          # Computes metrics for surprise and performance
+│   ├── model.py            # Prepare the LoRA heads
+│   ├── script.py
+├── main.py                 # The main file that runs the training pipelines
+├── README.md               # This file
+```
