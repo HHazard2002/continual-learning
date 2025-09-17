@@ -16,18 +16,6 @@ def compute_exact_match(data):
     """
     correct = 0
     for pred, exp in data:
-        # Remove dots, commas, parentheses, hashes etc. but keep &
-        pred = re.sub(r'[^\w\s&]', '', pred).strip()
-        exp = re.sub(r'[^\w\s&]', '', exp).strip()
-
-        # Handle multi-word labels
-        exp_tokens = exp.split()
-        pred_tokens = pred.split()
-
-        # Take only first class up to expected length
-        pred_first_class = " ".join(pred_tokens[:len(exp_tokens)])
-
-        if pred_first_class.lower() == exp.lower():
+        if pred.lower() == exp.lower():
             correct += 1
-
     return correct / len(data)
