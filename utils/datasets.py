@@ -36,16 +36,14 @@ def tokenize_t5(ex, tokenizer, task_prefix=""):
     source = (task_prefix + ex["prompt"]).strip()
     target = ex["label"]
 
-    model_inputs = tokenizer(source)
+    model_inputs = tokenizer(source, text_target=target)
+    
+    labels = model_inputs["labels"]
 
-    with tokenizer.as_target_tokenizer():
-        labels = tokenizer(target)["input_ids"]
-
-    # Fix edge cases: labels must be a non-empty list[int]
     if not isinstance(labels, list):
-        labels = list(labels)  # in case something returned a numpy array/torch tensor
+        labels = list(labels)
     if len(labels) == 0:
-        labels = [tokenizer.pad_token_id]  # avoid zero-length labels
+        labels = [tokenizer.pad_token_id]
 
     model_inputs["labels"] = labels
     return model_inputs

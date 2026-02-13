@@ -130,17 +130,17 @@ def main():
         trainer = Trainer(
             model=model,
             args=training_args,
-            train_dataset=None,  # assign below
+            train_dataset=None,
             eval_dataset=None,
             tokenizer=tokenizer,
             data_collator=data_collator,
         )
     else:
+        # REMOVE tokenizer=tokenizer from here:
         trainer = trainer_class(
             model=model,
             train_dataset=None,
             eval_dataset=None,
-            tokenizer=tokenizer,
             data_collator=data_collator,
         )
 

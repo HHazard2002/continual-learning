@@ -28,7 +28,7 @@ def evaluate_llama(model, test_ds, task, tokenizer, num_samples_eval, compute_ll
       print(f"The average loss per sequence for {task} is {losses / 100:.4f}")
 
 
-def evaluate_T5(model, test_ds, task, tokenizer, num_samples_eval=500,  batch_size=32, compute_ll=False, task_prefix="", DEVICE="mps"):
+def evaluate_T5(model, test_ds, task, tokenizer, num_samples_eval=500,  batch_size=32, compute_ll=False, task_prefix="", DEVICE="cuda"):
     model.eval()
     em = []
     losses = 0.0
