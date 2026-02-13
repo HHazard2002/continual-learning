@@ -3,7 +3,7 @@ set -euo pipefail
 
 python3 ./main.py \
   --model_name="google-t5/t5-large" \
-  --cl_method="mlt" \
+  --cl_method="dual_learner" \
   --tasks="dbpedia amazon yahoo ag_news" \
   --benchmark="HHazard/large-number-of-tasks" \
   --batch_size=1 \
@@ -11,11 +11,10 @@ python3 ./main.py \
   --learning_rate=1e-3 \
   --torch_dtype=bfloat16 \
   --num_samples_eval=2 \
-  --num_samples_training=5 \
-  --buffer="Reservoir" \
+  --num_samples_training=1000 \
+  --buffer="Surprise" \
   --update_buffer="before" \
   --compute_surprise=true \
-  --cl_method="replay" \
   --device="cuda" \
   --lora_alpha=32 \
   --lora_rank=8 \

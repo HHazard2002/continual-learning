@@ -4,12 +4,13 @@ import torch
 
 
 class ReplayTrainer(Trainer):
-    def __init__(self, *args, buffer=None, domain=None, replay_frequency=2, **kwargs):
+    def __init__(self, *args, buffer=None, domain=None, replay_frequency=2, update_buffer='online', **kwargs):
         super().__init__(*args, **kwargs)
         self.buffer = buffer
         self.domain = domain
         self._micro_step = 0  # counts forward passes
         self.replay_frequency = replay_frequency
+        self.update_buffer = update_buffer
 
     def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
         # Forward on current batch
@@ -17,7 +18,7 @@ class ReplayTrainer(Trainer):
         micro_batch_size = inputs["input_ids"].shape[0]
 
         # Add to buffer
-        if self.buffer is not None:
+        if self.buffer is not None and self.update_buffer == 'online':
             self.buffer.add_data(inputs["input_ids"], inputs["labels"], self.domain)
       
         # ---- Micro step count ----

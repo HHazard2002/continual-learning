@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from utils.metrics import get_ll
 
-def _seq_to_key(t: torch.Tensor) -> tuple[int, ...]:
+def _seq_to_key(t: torch.Tensor, PAD_ID) -> tuple[int, ...]:
     """Convert to hashable key after removing pad tokens on either end."""
     # 1‑D tensor expected here
     # Drop left & right padding; middle padding cannot appear in causal LM.
@@ -27,13 +27,13 @@ def get_ll(input_ids, labels, model):
     return per_token_nll
 
 
-def get_lls(inputs, labels, model):
+def get_lls(inputs, labels, model, PAD_ID):
     avg_lls = {}
     seq_to_labels = {}  # key → original labels
 
     for input_ids, label in zip(inputs, labels):
         ll = get_ll(input_ids, label, model)
-        key = _seq_to_key(torch.tensor(input_ids))
+        key = _seq_to_key(torch.tensor(input_ids), PAD_ID=PAD_ID)
         avg_lls[key] = ll
         seq_to_labels[key] = label  # store actual labels for this key
 
@@ -56,7 +56,7 @@ class Buffer:
         return rand if rand < self.buffer_size else -1
 
 
-    def add_data(self, input_ids, labels, dom):
+    def add_data(self, input_ids, labels, dom, surprise_scores=None):
         for i in range(len(input_ids)):
             idx = self.reservoir(self.num_seen_examples) if self.type == 'Reservoir' else 1
             input_id = input_ids[i].to(self.device)
@@ -77,7 +77,7 @@ class Buffer:
                     self.num_examples_per_dom[candidate[2]] -= 1
                     if dom in self.num_examples_per_dom:
                         self.num_examples_per_dom[dom] += 1
-                    self.buffer[candidate_idx] = (input_id, label, dom)
+                    self.buffer[candidate_idx] = (input_id, label, surprise_scores, dom)
 
     def remove_data(self, input_ids, dom):
         to_remove = set(ids for ids in input_ids)
@@ -96,7 +96,7 @@ class Buffer:
 
         # Use actual count, not requested count
         self.num_examples_per_dom[dom] -= actually_removed
-        print(f"Actually deleted {actually_removed} from domain {j}")
+        print(f"Actually deleted {actually_removed} from domain {dom}")
         self.buffer = new_buffer
 
     def get_data(self, size):
@@ -108,7 +108,8 @@ class Buffer:
 
     def is_empty(self):
         return len(self.buffer) == 0
-    
+
+
     def surprise_buffer_update(self, tokenizer, model, train_datasets, i, update_buffer):
         for j in range(len(train_datasets)):
             if  not self.is_empty() and ((j < i and i < 14 and update_buffer=="after") or (j <= i and i < 14 and update_buffer=="before")):
@@ -126,10 +127,11 @@ class Buffer:
 
             if  self.is_empty() or (j == i and i < 14 and update_buffer=="after") or (j == (i+1) and i < 14 and update_buffer=="before"):
         
-                lls, seq_to_labels = get_ll(
+                lls, seq_to_labels = get_lls(
                     train_datasets[j]['input_ids'],
                     train_datasets[j]["labels"],
-                    model
+                    model,
+                    PAD_ID=tokenizer.pad_token_id
                 )
 
                 surprise = sorted(lls.items(), key=lambda x: x[1], reverse=True)
@@ -154,6 +156,6 @@ class Buffer:
                 self.add_data(
                     input_ids_batch,
                     labels_batch,
+                    j,
                     surprise_scores_batch,
-                    j
                 )

@@ -10,6 +10,7 @@ import torch
 from utils.evaluation import evaluate_llama, evaluate_T5
 from utils.script import build_cfg
 from peft import LoraConfig
+from copy import deepcopy
 
 def resolve_dtype(x):
     if isinstance(x, torch.dtype): 
@@ -23,7 +24,7 @@ def resolve_dtype(x):
 trainers = {
     'ewc': EWCTrainer,
     'replay': ReplayTrainer,
-    'surprise_replay': SurpriseReplayTrainer,   # fixed key
+    'surprise_replay': ReplayTrainer, 
     'dual_learner': DualLearnerTrainer,
     'mlt': Trainer
 }
@@ -49,7 +50,6 @@ def main():
     benchmark = cfg["benchmark"]
     do_check_prompts_labels = get("do_check_prompts_labels", False)
     cl_method = cfg["cl_method"]
-    compute_surprise = get("compute_surprise", False)
     update_buffer = get("update_buffer")
     buffer_type = get("buffer")
     num_samples_training = get("num_samples_training")
@@ -136,13 +136,13 @@ def main():
             data_collator=data_collator,
         )
     else:
-        # REMOVE tokenizer=tokenizer from here:
         trainer = trainer_class(
             model=model,
             train_dataset=None,
             eval_dataset=None,
             data_collator=data_collator,
-        )
+            update_buffer = update_buffer
+        )        
 
     evaluate = pick_evaluator(MODEL_NAME)
 
@@ -173,7 +173,7 @@ def main():
                 buf.surprise_buffer_update(tokenizer, model, train_datasets, 0, update_buffer)
 
         if cl_method == "dual_learner":
-            trainer.slow_model = model
+            trainer.slow_model = deepcopy(model)
             trainer.lambda_ema = lambda_ema
 
         for i, task in enumerate(tasks):
@@ -191,13 +191,23 @@ def main():
 
             if buf is not None and update_buffer in {"before", "after"} and buffer_type == "Surprise":
                 buf.surprise_buffer_update(tokenizer, model, train_datasets, i, update_buffer)
+            
             trainer.model = model
+        
 
     print("--------Starting Evaluation---------")
     model.eval()
     for test_ds, task in zip(test_datasets, tasks):
         evaluate(model, test_ds, task, tokenizer, num_samples_eval, compute_ll=False)
     model.train()
+
+    if cl_method == 'dual_learner':
+        print("Results for slow learner")
+        trainer.slow_model.eval()
+        for test_ds, task in zip(test_datasets, tasks):
+            evaluate(trainer.slow_model, test_ds, task, tokenizer, num_samples_eval, compute_ll=False)
+        trainer.slow_model.train()
+
 
 if __name__ == "__main__":
     main()
