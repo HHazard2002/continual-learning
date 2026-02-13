@@ -23,9 +23,9 @@ This repository implements methods for reducing catastrophic forgetting in large
 git clone https://github.com/HHazard2002/continual-learning.git
 cd continual-learning
 
-# Python environment (example)
-python3 -m venv venv
-source venv/bin/activate
+# Conda environment (example)
+conda create -n sure python=3.12
+conda activate sure
 
 # Install dependencies
 pip install -r requirements.txt
