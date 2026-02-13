@@ -16,7 +16,7 @@ python3 ./main.py \
   --update_buffer="before" \
   --compute_surprise=true \
   --cl_method="replay" \
-  --device="mps" \
+  --device="cuda" \
   --lora_alpha=32 \
   --lora_rank=8 \
   --do_check_prompts_labels=true \
